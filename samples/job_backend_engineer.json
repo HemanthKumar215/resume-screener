@@ -1,0 +1,20 @@
+{
+  "title": "Backend Engineer (Python, AWS)",
+  "description": "We're hiring a backend engineer to build and run the APIs behind our hiring platform. You'll design REST APIs in Python, run them on AWS (Lambda, API Gateway, DynamoDB, S3), write infrastructure as code, and own services from design to production. Experience with SQL databases and Docker is required. Terraform, DynamoDB, CI/CD and Kubernetes experience are a plus.",
+  "required_skills": [
+    "Python",
+    "AWS",
+    "REST APIs",
+    "SQL",
+    "Docker"
+  ],
+  "nice_to_have_skills": [
+    "Terraform",
+    "DynamoDB",
+    "CI/CD",
+    "Kubernetes"
+  ],
+  "min_years": 3,
+  "min_education": "Bachelor's",
+  "alert_threshold": 80
+}
