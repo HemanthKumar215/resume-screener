@@ -1,0 +1,2 @@
+# Runtime dependencies bundled into the Lambda zip. boto3 is provided by the Lambda runtime.
+pypdf==6.17.0
