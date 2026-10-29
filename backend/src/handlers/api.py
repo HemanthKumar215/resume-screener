@@ -244,6 +244,7 @@ def _summary(c: dict[str, Any]) -> dict[str, Any]:
         "missing_required": r.get("missing_required", []),
         "experience_years": (r.get("experience") or {}).get("years"),
         "education": r.get("education"),
+        "components": [{"key": c["key"], "weight": c["weight"], "score": c["score"]} for c in r.get("components", [])],
     }
 
 
