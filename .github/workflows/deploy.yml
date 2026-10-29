@@ -1,0 +1,52 @@
+name: Deploy
+
+# Manual deploy to AWS using GitHub OIDC (no stored AWS keys).
+# One-time setup: apply infra/bootstrap, then set these repository variables:
+#   AWS_ROLE_ARN, TF_STATE_BUCKET, AWS_REGION (optional), ALERT_EMAIL (optional)
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency: deploy
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: vars.AWS_ROLE_ARN != ''
+    env:
+      AWS_REGION: ${{ vars.AWS_REGION || 'ap-south-1' }}
+      TF_VAR_region: ${{ vars.AWS_REGION || 'ap-south-1' }}
+      TF_VAR_alert_email: ${{ vars.ALERT_EMAIL }}
+      TF_AUTO_APPROVE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "~1.13"
+          terraform_wrapper: false
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Use remote state
+        run: |
+          cat > infra/backend_override.tf <<TF
+          terraform {
+            backend "s3" {
+              bucket       = "${{ vars.TF_STATE_BUCKET }}"
+              key          = "resume-screener/terraform.tfstate"
+              region       = "${AWS_REGION}"
+              use_lockfile = true
+            }
+          }
+          TF
+      - run: ./scripts/deploy.sh
